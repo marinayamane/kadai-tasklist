@@ -2,7 +2,12 @@
     {
         $users = User::paginate(10);
         
-        return view('users.index', [
-            'users' => $users,
-        ]);
+        $data = [
+            'user' => $user,
+            'tasks' => $tasks,
+        ];
+
+        $data += $this->counts($user);
+
+        return view('users.show', $data);
     }

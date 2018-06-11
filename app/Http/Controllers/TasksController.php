@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests;
 
-use App\Task;  
+use App\Http\Controllers\Controller;  
 
 class TasksController extends Controller
 {
@@ -16,11 +15,21 @@ class TasksController extends Controller
      */
     public function index()
     {
-         $tasks = Task::all();
+        $data = [];
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('tasks.index', [
-            'tasks' => $tasks,
-        ]);
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+            ];
+            $data += $this->counts($user);
+            return view('users.show', $data);
+        }else {
+            return view('welcome to Tasklist');
+        }
+    
         //
     }
 
