@@ -1,7 +1,9 @@
- public function index()
+ 
+public function show($id)
     {
-        $users = User::paginate(10);
-        
+        $user = User::find($id);
+        $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+
         $data = [
             'user' => $user,
             'tasks' => $tasks,

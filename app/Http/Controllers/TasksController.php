@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Http\Controllers\Controller;  
+use App\Http\Controllers\Controller; 
+
+use App\Task;
+
+use Illuminate\Support\Facades\Auth;
 
 class TasksController extends Controller
 {
@@ -25,9 +29,9 @@ class TasksController extends Controller
                 'tasks' => $tasks,
             ];
             $data += $this->counts($user);
-            return view('users.show', $data);
+            return view('tasks.index', $data);
         }else {
-            return view('welcome to Tasklist');
+            return view('welcome');
         }
     
         //
@@ -39,7 +43,8 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
+    {  
+        
         $task = new Task;
 
         return view('tasks.create', [
@@ -61,6 +66,7 @@ class TasksController extends Controller
         $task = new Task;
         $task->status = $request->status;
         $task->content = $request->content;
+        $task->user_id = \Auth::user()->id;
         $task->save();
 
         return redirect('/'); //
@@ -72,30 +78,38 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show($id){
+      
          $task = Task::find($id);
+          if (\Auth::user()->id === $task->user_id){
 
         return view('tasks.show', [
             'task' => $task,
         ]);
+          }
         //
-    }
-
+     return redirect('/');
+    
+}
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
+    public function edit($id){
+    
+    
         $task = Task::find($id);
+         if (\Auth::user()->id === $task->user_id){
 
         return view('tasks.edit', [
             'task' => $task,
         ]);//
-    }
+    }  return redirect('/');
+    
+    
+}
 
     /**
      * Update the specified resource in storage.
@@ -128,7 +142,9 @@ class TasksController extends Controller
     public function destroy($id)
     {
         $task = Task::find($id);
+        if (\Auth::user()->id === $task->user_id){
         $task->delete();
+        }
 
         return redirect('/');//
     }
