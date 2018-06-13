@@ -46,11 +46,14 @@ class TasksController extends Controller
     {  
         
         $task = new Task;
+          if (\Auth::user()->id === $task->user_id){
 
         return view('tasks.create', [
             'task' => $task, ]);
     }
-
+     return redirect('/');
+    
+}
     /**
      * Store a newly created resource in storage.
      *
