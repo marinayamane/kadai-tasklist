@@ -46,7 +46,7 @@ class TasksController extends Controller
     {  
         
         $task = new Task;
-          if (\Auth::check()&&\Auth::user()->id === $task->user_id){
+          if (\Auth::check()){
 
         return view('tasks.create', [
             'task' => $task, ]);
